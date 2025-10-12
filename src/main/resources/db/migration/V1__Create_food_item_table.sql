@@ -1,0 +1,7 @@
+CREATE TABLE Food_item (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL ,
+    categoria VARCHAR(10) NOT NULL,
+    quantidade INTEGER NOT NULL,
+    validade DATE NOT NULL
+);
