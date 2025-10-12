@@ -1,6 +1,6 @@
-package com.example.MagicFridgeAI.model;
+package com.example.MagicFridgeAI.enums;
 
-public enum FoodItemCategoria {
+public enum Categoria {
     VEGETAL,
     FRUTA,
     CARNE,

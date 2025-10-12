@@ -1,6 +1,6 @@
 package com.example.MagicFridgeAI.dto;
 
-import com.example.MagicFridgeAI.model.FoodItemCategoria;
+import com.example.MagicFridgeAI.enums.Categoria;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ public class FoodItemDTO {
     @NotBlank(message = "O nome é obrigatorio")
     private String nome;
     @NotNull(message = "A categoria é obrigatoria")
-    private FoodItemCategoria categoria;
+    private Categoria categoria;
     @NotNull(message = "A quantidade é obrigatoria")
     @Min(value = 1, message = "A quantidade tem que ser maior que 1")
     private Integer quantidade;
@@ -40,11 +40,11 @@ public class FoodItemDTO {
         this.nome = nome;
     }
 
-    public FoodItemCategoria getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(FoodItemCategoria categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
