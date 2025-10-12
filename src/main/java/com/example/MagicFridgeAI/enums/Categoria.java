@@ -7,5 +7,6 @@ public enum Categoria {
     LATICINIO,
     GORDURA,
     DOCE,
-    BEBIDA
+    BEBIDA,
+    GRAO
 }
