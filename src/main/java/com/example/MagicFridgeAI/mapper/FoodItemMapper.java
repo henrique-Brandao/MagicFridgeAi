@@ -23,7 +23,7 @@ public class FoodItemMapper {
         foodItemDTO.setCategoria(foodItem.getCategoria());
         foodItemDTO.setNome(foodItem.getNome());
         foodItemDTO.setQuantidade(foodItem.getQuantidade());
-        foodItem.setValidade(foodItem.getValidade());
+        foodItemDTO.setValidade(foodItem.getValidade());
 
         return foodItemDTO;
     }
