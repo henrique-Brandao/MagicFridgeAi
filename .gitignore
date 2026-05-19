@@ -34,3 +34,9 @@ build/
 
 /data
 .env
+frontend/
+client/node_modules/
+client/dist/
+client/*.tsbuildinfo
+client/vite.config.js
+client/vite.config.d.ts
