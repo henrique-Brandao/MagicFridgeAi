@@ -6,27 +6,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
-import { createFood, deleteFood, FoodItem, generateRecipe, listFoods, type Categoria } from "@/lib/api";
+import { createFood, deleteFood, FoodItem, generateRecipe, listFoods, type Recipe } from "@/lib/api";
 
-const categorias: Categoria[] = ["VEGETAL", "FRUTA", "CARNE", "LATICINIO", "GORDURA", "DOCE", "BEBIDA", "GRAO"];
-
-const categoryLabels: Record<Categoria, string> = {
-  VEGETAL: "Vegetal",
-  FRUTA: "Fruta",
-  CARNE: "Carne",
-  LATICINIO: "Laticinio",
-  GORDURA: "Gordura",
-  DOCE: "Doce",
-  BEBIDA: "Bebida",
-  GRAO: "Grao",
-};
+const categorySuggestions = ["Vegetal", "Fruta", "Carne", "Laticinio", "Grao", "Bebida", "Tempero", "Outro"];
+const unidades = ["unidade", "g", "kg", "ml", "L", "xicara", "colher", "fatia", "lata", "pacote"];
 
 const DEFAULT_VALIDADE = "2099-12-31";
 
 const initialForm: FoodItem = {
   nome: "",
-  categoria: "VEGETAL",
+  categoria: "",
   quantidade: 1,
+  unidade: "unidade",
   validade: DEFAULT_VALIDADE,
 };
 
@@ -34,7 +25,7 @@ const initialForm: FoodItem = {
 export default function App() {
   const [foods, setFoods] = useState<FoodItem[]>([]);
   const [form, setForm] = useState<FoodItem>(initialForm);
-  const [recipe, setRecipe] = useState("");
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loadingFoods, setLoadingFoods] = useState(true);
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -63,7 +54,13 @@ export default function App() {
     setError("");
 
     try {
-      await createFood({ ...form, quantidade: Number(form.quantidade), validade: DEFAULT_VALIDADE });
+      await createFood({
+        ...form,
+        categoria: form.categoria?.trim() || undefined,
+        quantidade: Number(form.quantidade),
+        unidade: form.unidade,
+        validade: DEFAULT_VALIDADE,
+      });
       setForm(initialForm);
       await loadFoods();
     } catch (err) {
@@ -87,7 +84,7 @@ export default function App() {
   async function handleGenerateRecipe() {
     setGenerating(true);
     setError("");
-    setRecipe("");
+    setRecipe(null);
 
     try {
       setRecipe(await generateRecipe());
@@ -113,7 +110,7 @@ export default function App() {
           </div>
           <div className="grid grid-cols-3 gap-3 rounded-lg border bg-card/80 p-3 shadow-glow backdrop-blur">
             <Metric label="Itens" value={foods.length.toString()} />
-            <Metric label="Categorias" value={new Set(foods.map((food) => food.categoria)).size.toString()} />
+            <Metric label="Categorias" value={new Set(foods.map((food) => food.categoria).filter(Boolean)).size.toString()} />
             <Metric label="Modo IA" value="ON" accent />
           </div>
         </header>
@@ -132,16 +129,29 @@ export default function App() {
                   <Label htmlFor="nome">Nome</Label>
                   <Input id="nome" placeholder="Tomate, arroz, frango..." value={form.nome} onChange={(event) => setForm({ ...form, nome: event.target.value })} required />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="categoria">Categoria</Label>
-                    <Select id="categoria" value={form.categoria} onChange={(event) => setForm({ ...form, categoria: event.target.value as Categoria })}>
-                      {categorias.map((categoria) => <option key={categoria} value={categoria}>{categoryLabels[categoria]}</option>)}
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="categoria">Categoria</Label>
+                  <Input
+                    id="categoria"
+                    list="categorias"
+                    placeholder="Opcional"
+                    value={form.categoria ?? ""}
+                    onChange={(event) => setForm({ ...form, categoria: event.target.value })}
+                  />
+                  <datalist id="categorias">
+                    {categorySuggestions.map((categoria) => <option key={categoria} value={categoria} />)}
+                  </datalist>
+                </div>
+                <div className="grid grid-cols-[1fr_130px] gap-3">
                   <div className="space-y-2">
                     <Label htmlFor="quantidade">Quantidade</Label>
                     <Input id="quantidade" min={1} type="number" value={form.quantidade} onChange={(event) => setForm({ ...form, quantidade: Number(event.target.value) })} required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="unidade">Unidade</Label>
+                    <Select id="unidade" value={form.unidade} onChange={(event) => setForm({ ...form, unidade: event.target.value })}>
+                      {unidades.map((unidade) => <option key={unidade} value={unidade}>{unidade}</option>)}
+                    </Select>
                   </div>
                 </div>
                 <Button className="w-full" disabled={saving} type="submit">
@@ -176,7 +186,7 @@ export default function App() {
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <h4 className="font-medium text-foreground">{food.nome}</h4>
-                              <Badge className="mt-2 bg-secondary/10 text-secondary">{categoryLabels[food.categoria]}</Badge>
+                              {food.categoria ? <Badge className="mt-2 bg-secondary/10 text-secondary">{food.categoria}</Badge> : null}
                             </div>
                             <Button aria-label="Remover ingrediente" variant="ghost" size="icon" onClick={() => void handleDelete(food.id)}>
                               <Trash2 />
@@ -184,7 +194,7 @@ export default function App() {
                           </div>
                           <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
                             <span>Quantidade</span>
-                            <span className="font-medium text-foreground">{food.quantidade}</span>
+                            <span className="font-medium text-foreground">{food.quantidade} {food.unidade}</span>
                           </div>
                         </article>
                       );
@@ -206,8 +216,8 @@ export default function App() {
                 </Button>
               </CardHeader>
               <CardContent>
-                <div className="min-h-48 whitespace-pre-wrap rounded-lg border bg-background/70 p-4 text-sm leading-6 text-foreground">
-                  {generating ? "Consultando a IA..." : recipe || "A receita vai aparecer aqui depois que voce gerar uma sugestao."}
+                <div className="min-h-48 rounded-lg border bg-background/70 p-4 text-sm leading-6 text-foreground">
+                  {generating ? "Consultando a IA..." : recipe ? <RecipeView recipe={recipe} /> : "A receita vai aparecer aqui depois que voce gerar uma sugestao."}
                 </div>
               </CardContent>
             </Card>
@@ -215,6 +225,33 @@ export default function App() {
         </section>
       </div>
     </main>
+  );
+}
+
+function RecipeView({ recipe }: { recipe: Recipe }) {
+  return (
+    <div className="space-y-5">
+      <div>
+        <h3 className="text-lg font-semibold text-primary">{recipe.titulo || "Receita sugerida"}</h3>
+        {recipe.resumo ? <p className="mt-2 text-muted-foreground">{recipe.resumo}</p> : null}
+      </div>
+      <RecipeList title="Ingredientes" items={recipe.ingredientes} ordered={false} />
+      <RecipeList title="Preparo" items={recipe.preparo} ordered />
+      <RecipeList title="Observacoes" items={recipe.observacoes} ordered={false} />
+    </div>
+  );
+}
+
+function RecipeList({ title, items, ordered = false }: { title: string; items?: string[]; ordered?: boolean }) {
+  if (!items?.length) return null;
+  const List = ordered ? "ol" : "ul";
+  return (
+    <section>
+      <h4 className="mb-2 font-medium text-foreground">{title}</h4>
+      <List className={ordered ? "list-decimal space-y-1 pl-5 text-muted-foreground" : "list-disc space-y-1 pl-5 text-muted-foreground"}>
+        {items.map((item, index) => <li key={`${title}-${index}`}>{item}</li>)}
+      </List>
+    </section>
   );
 }
 

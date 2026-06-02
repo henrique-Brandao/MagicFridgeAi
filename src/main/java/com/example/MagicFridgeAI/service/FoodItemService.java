@@ -48,6 +48,7 @@ public class FoodItemService {
         if(food.getCategoria() != null) possibleFood.setCategoria(food.getCategoria());
         if(food.getNome() != null) possibleFood.setNome(food.getNome());
         if(food.getQuantidade() != null) possibleFood.setQuantidade(food.getQuantidade());
+        if(food.getUnidade() != null) possibleFood.setUnidade(food.getUnidade());
 
         return mapper.map(possibleFood);
     }

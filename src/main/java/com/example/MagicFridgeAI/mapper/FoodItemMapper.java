@@ -12,6 +12,7 @@ public class FoodItemMapper {
         foodItem.setCategoria(foodItemDTO.getCategoria());
         foodItem.setNome(foodItemDTO.getNome());
         foodItem.setQuantidade(foodItemDTO.getQuantidade());
+        foodItem.setUnidade(foodItemDTO.getUnidade());
         foodItem.setValidade(foodItemDTO.getValidade());
 
         return foodItem;
@@ -23,6 +24,7 @@ public class FoodItemMapper {
         foodItemDTO.setCategoria(foodItem.getCategoria());
         foodItemDTO.setNome(foodItem.getNome());
         foodItemDTO.setQuantidade(foodItem.getQuantidade());
+        foodItemDTO.setUnidade(foodItem.getUnidade());
         foodItemDTO.setValidade(foodItem.getValidade());
 
         return foodItemDTO;

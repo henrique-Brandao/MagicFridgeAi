@@ -1,5 +1,6 @@
 package com.example.MagicFridgeAI.controller;
 
+import com.example.MagicFridgeAI.dto.RecipeDTO;
 import com.example.MagicFridgeAI.service.ChatGptService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,18 @@ public class RecipeController {
     }
 
     @GetMapping("/generate")
-    public Mono<ResponseEntity<String>> generateRecipe() {
+    public Mono<ResponseEntity<RecipeDTO>> generateRecipe() {
         return chatGptService.generateRecipe()
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(
-                        ResponseEntity.internalServerError()
-                                .body("Erro ao gerar receita: " + e.getMessage())
+                        ResponseEntity.internalServerError().body(errorRecipe(e.getMessage()))
                 ));
     }
 
+    private RecipeDTO errorRecipe(String message) {
+        RecipeDTO recipe = new RecipeDTO();
+        recipe.setTitulo("Erro ao gerar receita");
+        recipe.setResumo(message);
+        return recipe;
+    }
 }

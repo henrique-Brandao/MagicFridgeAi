@@ -1,6 +1,4 @@
 package com.example.MagicFridgeAI.model;
-
-import com.example.MagicFridgeAI.enums.Categoria;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -20,10 +18,11 @@ public class FoodItem {
     @Column(nullable = false)
     private String nome;
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Categoria categoria;
+    private String categoria;
     @Column(nullable = false)
     private Integer quantidade;
+    @Column(nullable = false)
+    private String unidade;
     @Column(nullable = false)
     private LocalDate validade;
 
@@ -45,11 +44,11 @@ public class FoodItem {
         this.nome = nome;
     }
 
-    public Categoria getCategoria() {
+    public String getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(Categoria categoria) {
+    public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 
@@ -59,6 +58,14 @@ public class FoodItem {
 
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public String getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(String unidade) {
+        this.unidade = unidade;
     }
 
     public LocalDate getValidade() {

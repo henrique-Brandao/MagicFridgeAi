@@ -1,11 +1,18 @@
-﻿export type Categoria = "VEGETAL" | "FRUTA" | "CARNE" | "LATICINIO" | "GORDURA" | "DOCE" | "BEBIDA" | "GRAO";
-
-export type FoodItem = {
+﻿export type FoodItem = {
   id?: number;
   nome: string;
-  categoria: Categoria;
+  categoria?: string;
   quantidade: number;
+  unidade: string;
   validade: string;
+};
+
+export type Recipe = {
+  titulo?: string;
+  resumo?: string;
+  ingredientes?: string[];
+  preparo?: string[];
+  observacoes?: string[];
 };
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
@@ -54,8 +61,15 @@ export async function generateRecipe() {
   const text = await response.text();
 
   if (!response.ok) {
-    throw new Error(text || "Nao foi possivel gerar a receita.");
+    let message = text;
+    try {
+      const recipe = JSON.parse(text) as Recipe;
+      message = recipe.resumo || recipe.titulo || message;
+    } catch {
+      message = text;
+    }
+    throw new Error(message || "Nao foi possivel gerar a receita.");
   }
 
-  return text;
+  return text ? (JSON.parse(text) as Recipe) : {};
 }
