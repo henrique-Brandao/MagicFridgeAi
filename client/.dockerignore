@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.tsbuildinfo
+magic-fridge-vite-cache/
+.env

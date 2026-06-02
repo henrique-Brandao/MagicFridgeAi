@@ -1,0 +1,10 @@
+target/
+data/
+.env
+.git/
+.idea/
+.vscode/
+client/node_modules/
+client/dist/
+client/*.tsbuildinfo
+client/magic-fridge-vite-cache/
