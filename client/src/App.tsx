@@ -87,7 +87,9 @@ export default function App() {
     setRecipe(null);
 
     try {
-      setRecipe(await generateRecipe());
+      const generatedRecipe = await generateRecipe();
+      setRecipe(generatedRecipe);
+      setFoods([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nao foi possivel gerar a receita.");
     } finally {

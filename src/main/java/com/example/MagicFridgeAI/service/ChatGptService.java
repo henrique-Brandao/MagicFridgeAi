@@ -86,7 +86,8 @@ public class ChatGptService {
                 .map(response -> response.path("output").get(0)
                                 .path("content").get(0)
                                 .path("text").asText())
-                .map(this::parseRecipe);
+                .map(this::parseRecipe)
+                .doOnSuccess(recipe -> repository.deleteAll());
      }
 
     private RecipeDTO parseRecipe(String recipeText) {
