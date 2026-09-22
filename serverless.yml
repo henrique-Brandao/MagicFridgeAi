@@ -1,3 +1,5 @@
+org: henriquefr321
+app: magicfridgeai
 service: magicfridgeai-api
 
 frameworkVersion: '4'
