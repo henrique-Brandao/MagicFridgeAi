@@ -1,15 +1,12 @@
-FROM eclipse-temurin:17-jdk AS build
+FROM python:3.12-slim
+
 WORKDIR /app
 
-COPY .mvn .mvn
-COPY mvnw pom.xml ./
-COPY src src
-RUN ./mvnw -DskipTests package
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-FROM eclipse-temurin:17-jre
-WORKDIR /app
-
-COPY --from=build /app/target/MagicFridgeAI-0.0.1-SNAPSHOT.jar app.jar
+COPY . .
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

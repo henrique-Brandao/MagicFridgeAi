@@ -40,3 +40,5 @@ client/dist/
 client/*.tsbuildinfo
 client/vite.config.js
 client/vite.config.d.ts
+node_modules
+.serverless/
