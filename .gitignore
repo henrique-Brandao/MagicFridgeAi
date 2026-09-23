@@ -42,3 +42,14 @@ client/vite.config.js
 client/vite.config.d.ts
 node_modules
 .serverless/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Serverless packaging
+*.zip
+deployment.zip
