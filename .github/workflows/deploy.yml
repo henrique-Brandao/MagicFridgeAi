@@ -42,10 +42,10 @@ jobs:
       - name: Setup Node.js (for Serverless Framework)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install Serverless Framework
-        run: npm install -g serverless
+        run: npm install -g serverless@3
 
       - name: Serverless Deploy
         env:
