@@ -47,6 +47,11 @@ jobs:
       - name: Install Serverless Framework
         run: npm install -g serverless@3
 
+      - name: Build Deployment Package
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
       - name: Serverless Deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
