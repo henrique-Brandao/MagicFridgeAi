@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
   test:
@@ -58,4 +59,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          serverless deploy --stage dev
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            serverless deploy --stage prod
+          else
+            serverless deploy --stage dev
+          fi
