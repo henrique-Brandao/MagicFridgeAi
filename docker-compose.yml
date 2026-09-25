@@ -1,0 +1,39 @@
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - API_KEY=${API_KEY}
+      - FOOD_TABLE=magicfridgeai-api-dev-food
+      - AWS_REGION=us-east-1
+      - DYNAMODB_URL=http://dynamodb-local:8000
+      - AWS_ACCESS_KEY_ID=fakeMyKeyId
+      - AWS_SECRET_ACCESS_KEY=fakeSecretAccessKey
+    depends_on:
+      - dynamodb-local
+    volumes:
+      - ./app:/app/app
+      - ./start-local.py:/app/start-local.py
+
+    command: ["python", "start-local.py"]
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./client/src:/app/src
+      - ./client/index.html:/app/index.html
+    depends_on:
+      - backend
