@@ -3,14 +3,12 @@ import json
 from openai import OpenAI
 from app.models import FoodItemRead, RecipeResponse
 
-# Configura o client do OpenAI
 client = OpenAI(api_key=os.environ.get("API_KEY"))
 
 def generate_recipe_from_ingredients(ingredients: list[FoodItemRead]) -> RecipeResponse:
     if not ingredients:
         raise ValueError("Não há ingredientes cadastrados para gerar uma receita.")
 
-    # Constrói a lista de ingredientes em string para o prompt
     ingredientes_str = "\n".join([f"- {item.quantidade} {item.unidade} de {item.nome}" for item in ingredients])
     
     system_prompt = """
@@ -37,10 +35,9 @@ def generate_recipe_from_ingredients(ingredients: list[FoodItemRead]) -> RecipeR
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        temperature=0.7
+        temperature=0.7 # grau de criatividade, se for menor mais exato e se for maior mais criativo
     )
     
-    # Parse do JSON retornado pela OpenAI
     content = response.choices[0].message.content
     try:
         data = json.loads(content)

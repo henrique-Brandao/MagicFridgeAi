@@ -24,12 +24,7 @@ app.add_middleware(
 def create_food_item(food: FoodItemCreate):
     table = get_dynamodb_table()
     
-    # DynamoDB precisa de uma chave primária em string. Vamos gerar um UUID.
-    item_id = str(uuid.uuid4())
-    
-    # Convert datas para string (boto3 não aceita `date` nativamente)
-    # pydantic tem o `.model_dump()` e podemos customizar serializers. 
-    # Um truque rápido é fazer JSON dump/load ou usar mode="json" do Pydantic V2
+    item_id = str(uuid.uuid4())    
     item_dict = food.model_dump(mode="json")
     item_dict["id"] = item_id
     
@@ -60,14 +55,12 @@ def read_food_item(item_id: str):
 def update_food_item(item_id: str, food: FoodItemUpdate):
     table = get_dynamodb_table()
     
-    # Busca item existente
     existing_response = table.get_item(Key={"id": item_id})
     existing_item = existing_response.get("Item")
     
     if not existing_item:
         raise HTTPException(status_code=404, detail="Ingrediente não encontrado")
     
-    # Merge com as novas atualizações
     update_data = food.model_dump(exclude_unset=True, mode="json")
     for key, value in update_data.items():
         existing_item[key] = value
@@ -79,7 +72,6 @@ def update_food_item(item_id: str, food: FoodItemUpdate):
 def delete_food_item(item_id: str):
     table = get_dynamodb_table()
     
-    # Busca para ver se existe
     existing_response = table.get_item(Key={"id": item_id})
     if not existing_response.get("Item"):
         raise HTTPException(status_code=404, detail="Ingrediente não encontrado")
@@ -101,7 +93,6 @@ def generate_recipe():
     try:
         recipe = generate_recipe_from_ingredients(items)
         
-        # O comportamento original apagava tudo após gerar a receita
         with table.batch_writer() as batch:
             for item in raw_items:
                 batch.delete_item(Key={"id": item["id"]})
@@ -110,5 +101,4 @@ def generate_recipe():
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Entrypoint para a AWS Lambda
 handler = Mangum(app)

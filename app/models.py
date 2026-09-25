@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class FoodItemBase(BaseModel):
     nome: str
     categoria: Optional[str] = None
-    quantidade: int = Field(ge=1)  # Validação: >= 1
+    quantidade: int = Field(ge=1)
     unidade: str
     validade: date
 
