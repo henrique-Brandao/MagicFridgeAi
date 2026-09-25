@@ -49,6 +49,7 @@ __pycache__/
 *$py.class
 venv/
 .venv/
+.coverage
 
 # Serverless packaging
 *.zip
