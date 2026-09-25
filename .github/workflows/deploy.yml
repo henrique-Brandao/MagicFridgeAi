@@ -22,9 +22,15 @@ jobs:
           pip install -r requirements.txt
           pip install pytest httpx
 
-      - name: Run Tests
+      - name: Run Tests with Coverage
         run: |
-          pytest tests/
+          pytest --cov=app --cov-report=xml tests/
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   deploy:
     needs: test
