@@ -4,13 +4,13 @@ from fastapi.testclient import TestClient
 from moto import mock_aws
 import boto3
 
-os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-os.environ["AWS_SECURITY_TOKEN"] = "testing"
-os.environ["AWS_SESSION_TOKEN"] = "testing"
+os.environ["AWS_ACCESS_KEY_ID"] = "testing" # nosonar
+os.environ["AWS_SECRET_ACCESS_KEY"] = "testing" # nosonar
+os.environ["AWS_SECURITY_TOKEN"] = "testing" # nosonar
+os.environ["AWS_SESSION_TOKEN"] = "testing" # nosonar
 os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 os.environ["FOOD_TABLE"] = "MagicFridgeTestTable"
-os.environ["API_KEY"] = "fake-key"
+os.environ["API_KEY"] = "fake-key" # nosonar
 if "DYNAMODB_URL" in os.environ:
     del os.environ["DYNAMODB_URL"]
 

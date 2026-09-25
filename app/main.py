@@ -14,7 +14,11 @@ app = FastAPI(title="MagicFridgeAI API", description="Serverless Python Backend 
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], #substituir futuramente
+    allow_origins=[
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "https://magicfridge.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
