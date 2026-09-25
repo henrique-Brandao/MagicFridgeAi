@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest httpx
+          pip install -r requirements-dev.txt
 
       - name: Run Tests with Coverage
         run: |
