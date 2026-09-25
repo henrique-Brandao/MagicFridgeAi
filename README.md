@@ -1,59 +1,56 @@
-# MagicFridgeAI (Serverless AWS + DynamoDB)
+# MagicFridge AI
 
-MagicFridgeAI é uma API backend 100% Serverless em Python/FastAPI que usa AWS Lambda e DynamoDB para cadastrar ingredientes em uma geladeira e gerar sugestões de receitas usando Inteligência Artificial.
+Um projeto de estudo criado para praticar o desenvolvimento em cloud (AWS), a integração de APIs com modelos de Inteligência Artificial (OpenAI) e práticas de DevOps (Docker e CI/CD) utilizando o ecossistema Python (FastAPI + Serverless). 
 
-> Observação de autoria: O backend original era em Java/Spring Boot com PostgreSQL, mas foi totalmente refatorado para Python focado em arquitetura NoSQL (DynamoDB) com custo zero e zero de manutenção na AWS.
+A aplicação é um gerenciador simples de ingredientes de geladeira que se conecta à API da OpenAI para sugerir receitas com base no que está disponível.
 
-## Tecnologias utilizadas (Backend)
-- Python 3.11+
-- FastAPI (Pydantic para validação)
-- Boto3 (AWS SDK para Python)
-- AWS DynamoDB (Banco de Dados NoSQL)
-- AWS Lambda / API Gateway (Hospedagem)
-- Serverless Framework (Deploy)
+## Tecnologias Utilizadas
 
-## Como rodar o deploy na AWS
+- **Backend:** Python 3.11, FastAPI
+- **Banco de Dados:** Amazon DynamoDB
+- **Frontend:** React, Vite
+- **Infraestrutura:** Docker (desenvolvimento) e AWS Lambda via Serverless Framework (produção)
+- **Testes:** Pytest, Moto (para simular o banco localmente)
+- **CI/CD:** Github Actions
 
-Este projeto utiliza o **Serverless Framework** para automação da infraestrutura. O arquivo `serverless.yml` criará automaticamente a tabela do DynamoDB e as permissões de rede.
+## Estrutura do Projeto
 
-### 1. Pré-requisitos
-- Tenha uma conta na AWS.
-- Instale a [AWS CLI](https://aws.amazon.com/pt/cli/) e configure suas credenciais (`aws configure`).
-- Instale o Node.js e o Serverless Framework via npm:
-  ```bash
-  npm install -g serverless
-  ```
+Optei por uma estrutura plana (Flat Architecture), que é o padrão recomendado para aplicações em AWS Lambda, visando manter o código simples e focado no domínio da aplicação.
 
-### 2. Configurando o projeto localmente
-Entre na raiz do projeto e instale o plugin do Python para o Serverless:
+## Como rodar localmente
+
+Utilizamos o Docker Compose para subir a API, o banco de dados local e o frontend sem precisar conectar na nuvem.
+
+1. Clone o repositório.
+2. Copie o arquivo `.env.example` para `.env` e adicione sua chave do ChatGPT:
+   ```bash
+   cp .env.example .env
+   ```
+3. Suba os containers:
+   ```bash
+   docker-compose up --build
+   ```
+
+- A API e a documentação (Swagger) ficarão disponíveis na porta `8080`.
+- O Frontend ficará disponível na porta `5174`.
+- O DynamoDB local rodará na porta `8000`.
+
+## Rodando os Testes
+
+Para testar a aplicação sem gastar créditos na AWS ou na OpenAI:
+
 ```bash
-npm init -y
-npm install --save-dev serverless-python-requirements
+# Crie e ative seu ambiente virtual (se ainda não tiver)
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Instale as dependências normais e as de teste
+pip install -r requirements.txt -r requirements-dev.txt
+
+# Execute o pytest
+pytest tests/
 ```
 
-### 3. Deploy
-Para subir o projeto na AWS, basta rodar:
-```bash
-serverless deploy --stage dev
-```
-O framework exibirá no terminal a URL (Endpoint) do seu API Gateway.
+## Deploy
 
-### Variáveis de Ambiente
-O backend exige uma variável chamada `API_KEY` da OpenAI. O modo mais simples de passar para o deploy é rodar:
-```bash
-API_KEY="sk-suachave" serverless deploy
-```
-
----
-
-## Endpoints Principais
-A base url será a que o Serverless Framework cuspir no terminal após o deploy.
-
-| Método | Endpoint | Descrição |
-| --- | --- | --- |
-| `POST` | `/food` | Cadastra um ingrediente. |
-| `GET` | `/food` | Lista todos os ingredientes. |
-| `GET` | `/food/{id}` | Busca um ingrediente pelo ID gerado pelo DynamoDB. |
-| `PATCH` | `/food/{id}` | Atualiza parcialmente um ingrediente. |
-| `DELETE` | `/food/{id}` | Remove um ingrediente. |
-| `GET` | `/recipes/generate` | Gera receita consumindo a API da OpenAI. Os ingredientes são removidos do banco em seguida. |
+O deploy na AWS é feito automaticamente pelo Github Actions toda vez que um commit é feito na branch `main`. É necessário configurar as chaves da AWS e da OpenAI nas *Secrets* do repositório para a pipeline funcionar.
